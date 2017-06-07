@@ -46,3 +46,6 @@ while main == True:
                 main = False
 
     screen.blit (backdrop,  backdropRect)
+
+    pygame.display.flip()
+    clock.tick(fps)
