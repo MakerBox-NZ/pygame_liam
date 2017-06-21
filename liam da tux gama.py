@@ -12,15 +12,31 @@ class Player(pygame.sprite.Sprite):
     #spawn a player
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
+        self.momentumX = 0 #move along X
+        self.momentumY = 0 #move along Y
         self.image = pygame.image.load(os.path.join('images', 'hero.png')).convert()
         self.image.convert_alpha() #opimise for alpha
         self.image.set_colorkey(alpha) #set alpha
         self.rect = self.image.get_rect()
         
+    def control(self, x, y):
+        #control player movement
+        self.momentumX += x
+        self.momentumY += y
+
+    def update(self):
+        #update sprite position
+        currentX = self.rect.x
+        nextX = currentX + self.momentumX
+        self.rect.y = nextX
+
+        currentY = self.rect.y
+        nextY = currentY + self.momentumY
+        self.rect.y = nextY
 
 
 
-
+        
 '''SETUP'''
 # code runs once
 screenX = 960  #screen width
@@ -44,6 +60,7 @@ player.rect.x = 0 #go to x
 player.rect.y = 0 #go to y
 movingsprites = pygame.sprite.Group()
 movingsprites.add(player)
+movesteps = 10 #how fast to move
 
 
 
@@ -68,8 +85,10 @@ while main == True:
 
             if event.key == pygame.K_LEFT or event.key == ord ('a'):
                 print('left stop')
+                player.control(movesteps, 0)
             if event.key == pygame.K_RIGHT or event.key == ord ('d'):
                 print('right stop')
+                player.control(-movesteps, 0)
             if event.key == pygame.K_UP or event.key == ord ('w'):
                 print('jump stop')
 
@@ -77,8 +96,10 @@ while main == True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT or event.key == ord ('a'):
                 print ('left')
+                player.control(-movesteps, 0)
             if event.key == pygame.K_RIGHT or event.key == ord ('d'):
                 print ('right')
+                player.control(movesteps, 0)
             if event.key == pygame.K_UP or event.key == ord ('w'):
                 print ('jump')
                 
@@ -88,7 +109,7 @@ while main == True:
 
     screen.blit (backdrop,  backdropRect)
 
-
+    player.update() #update player position
     movingsprites.draw(screen) #draw player
     pygame.display.flip()
     clock.tick(fps)
