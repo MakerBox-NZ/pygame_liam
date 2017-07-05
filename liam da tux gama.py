@@ -18,13 +18,17 @@ class Player(pygame.sprite.Sprite):
         self.image.convert_alpha() #opimise for alpha
         self.image.set_colorkey(alpha) #set alpha
         self.rect = self.image.get_rect()
-        
+
+        self.score = 0 #set score
+
     def control(self, x, y):
         #control player movement
         self.momentumX += x
         self.momentumY += y
 
-    def update(self):
+        
+
+    def update(self, enemy_list):
         #update sprite position
         currentX = self.rect.x
         nextX = currentX + self.momentumX
@@ -33,6 +37,12 @@ class Player(pygame.sprite.Sprite):
         currentY = self.rect.y
         nextY = currentY + self.momentumY
         self.rect.y = nextY
+
+        #collisions
+        enemy_hit_list = pygame.sprite.spritecollide(self, enemy_list, False)
+        for enemy in enemy_hit_list:
+            self.score -= 1
+            print(self.score)
         
 
 class Enemy(pygame.sprite.Sprite):
@@ -140,7 +150,7 @@ while main == True:
 
     screen.blit (backdrop,  backdropRect)
 
-    player.update() #update player position
+    player.update(enemy_list) #update player position
     movingsprites.draw(screen) #draw player
     
     enemy_list.draw(screen) #refresh enemies
