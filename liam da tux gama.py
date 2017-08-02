@@ -68,7 +68,31 @@ class Enemy(pygame.sprite.Sprite):
             print('reset')
 
         self.counter += 1
-    
+
+
+class Platform(pygame.sprite.Sprite):
+    #x location, y location, img width, img height, img file)
+    def __init__(self,xloc,yloc,imgw, imgh, img):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([imgw, imgh])
+        self.image.convert_alpha()
+        self.image.set_colorkey(alpha)
+        self.blockpic = pygame.image.load(img).convert()
+        self.rect = self.image.get_rect()
+        self.rect.y = yloc
+        self.rect.x = xloc
+
+        #paint image into blocks
+        self.image.blit(self.blockpic,(0,0),(0,0,imgw,imgh))
+
+        
+    def level1():
+        #create level 1
+        platform_list = pygame.sprite.Group()
+        block = Platform(0, 591, 768, 118,os.path.join('images','block0.png'))
+        platform_list.add(block) #after each block
+
+        return platform_list #at end of function level1
 
 
 
@@ -90,6 +114,8 @@ main = True
 screen = pygame.display.set_mode ( [screenX,  screenY] )
 backdrop = pygame.image.load (os.path.join ( 'images',   'stage.png' ) ) .convert ( )
 backdropRect = screen.get_rect ( )
+
+platform_list = Platform.level1() #set stage to Level 1
 
 player = Player() #spawn player
 player.rect.x = 0 #go to x
@@ -149,7 +175,8 @@ while main == True:
 
 
     screen.blit (backdrop,  backdropRect)
-
+    
+    platform_list.draw(screen) #draw platforms on screen
     player.update(enemy_list) #update player position
     movingsprites.draw(screen) #draw player
     
