@@ -51,6 +51,11 @@ class Player(pygame.sprite.Sprite):
                 self.rect.x = currentX=9
                 self.momentumY = 0
 
+        if self.momentumY > 0:
+            for block in block_hit_list:
+                self.rect.y = currentY
+                self.momentumY = 0
+
     def gravity(self):
         self.momentumY += 3.2  #how fast player falls
 
