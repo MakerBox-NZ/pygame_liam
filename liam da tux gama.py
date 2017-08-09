@@ -111,6 +111,12 @@ class Platform(pygame.sprite.Sprite):
         block = Platform(0, 591, 768, 118,os.path.join('images','block0.png'))
         platform_list.add(block) #after each block
 
+        block = Platform(500, 400, 768, 118,os.path.join('images','block0.png'))
+        platform_list.add(block) #after each block
+
+        block = Platform(700, 600, 768, 118,os.path.join('images','block0.png'))
+        platform_list.add(block) #after each block
+
         return platform_list #at end of function level1
 
 
