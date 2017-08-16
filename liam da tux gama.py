@@ -14,6 +14,10 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.momentumX = 0 #move along X
         self.momentumY = 0 #move along Y
+
+        #gravity variables
+        self.collide_delta = 0
+        self.jump_delta = 6
         self.image = pygame.image.load(os.path.join('images', 'hero.png')).convert()
         self.image.convert_alpha() #opimise for alpha
         self.image.set_colorkey(alpha) #set alpha
@@ -38,6 +42,16 @@ class Player(pygame.sprite.Sprite):
         nextY = currentY + self.momentumY
         self.rect.y = nextY
 
+        #gravity
+        if self.collide_delta < 6 and self.jump_delta < 6:
+            self.jump_delta = 6*2
+            self.momentumY -=33 #how high to jump
+
+            self.collide_delta +=6
+            self.jump_delta += 6
+
+
+
         #collisions
         enemy_hit_list = pygame.sprite.spritecollide(self, enemy_list, False)
         for enemy in enemy_hit_list:
@@ -48,14 +62,19 @@ class Player(pygame.sprite.Sprite):
         if self.momentumX > 0:
             for block in block_hit_list:
                 self.rect.y = currentY
-                self.rect.x = currentX=9
+                self.rect.x = currentX+9
                 self.momentumY = 0
+                self.collide_delta = 0 #stop jumping
 
         if self.momentumY > 0:
             for block in block_hit_list:
                 self.rect.y = currentY
                 self.momentumY = 0
-
+                self.collide_delta = 0 #stop jumping
+                
+    def jump (self, platform_list):
+        self.jump_delta = 0
+        
     def gravity(self):
         self.momentumY += 3.2  #how fast player falls
 
@@ -194,6 +213,7 @@ while main == True:
                 player.control(movesteps, 0)
             if event.key == pygame.K_UP or event.key == ord ('w'):
                 print ('jump')
+                player.jump(platform_list)
                 
 
 
