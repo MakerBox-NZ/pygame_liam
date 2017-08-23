@@ -1,12 +1,18 @@
 
 
 
-import pygame
+import pygame #load pygame keywords
 import sys
 import os
+import pygame.freetype #load fonts
 
 '''OBJECTS'''
 # put classes & functions here
+
+def stats(score):
+    #display text, 1, color (rgb)
+    text_score = myfont.render("Score: "+str(score), 1, (250,147,248))
+    screen.blit(text_score, (4,4))
 
 class Player(pygame.sprite.Sprite):
     #spawn a player
@@ -168,6 +174,12 @@ fps = 40 #frame rate
 afps = 4 #animation cycles
 clock = pygame.time.Clock ( )
 pygame.init ( )
+pygame.font.init() #start freetype
+
+font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "fonts", "amazdoom.ttf")
+font_size = 64
+myfont = pygame.font.Font(font_path, font_size)
+
 
 main = True
 
@@ -244,6 +256,9 @@ while main == True:
     
     enemy_list.draw(screen) #refresh enemies
     enemy.move() # move enemy sprite
+
+    stats(player.score) #draw text
+
     pygame.display.flip()
     clock.tick(fps)
 
