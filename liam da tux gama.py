@@ -24,6 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         self.score = 0 #set score
+        self.damage = 0 #player is hit
 
     def control(self, x, y):
         #control player movement
@@ -54,9 +55,24 @@ class Player(pygame.sprite.Sprite):
 
         #collisions
         enemy_hit_list = pygame.sprite.spritecollide(self, enemy_list, False)
-        for enemy in enemy_hit_list:
+        '''for enemy in enemy_hit_list:
             self.score -= 1
-            print(self.score)
+            print(self.score)'''
+
+        if self.damage == 0:
+            for enemy in enemy_hit_list:
+                if not self.rect.contains(enemy):
+                    self.damage = self.rect.colliderect(enemy)
+                    print(self.score)
+
+
+        if self.damage == 1:
+            idx = self.rect.collidelist(enemy_hit_list)
+            if idx == -1:
+                self.damage = 0 #set damage back to 0
+                self.score -= 1 #subtract 1 hp
+
+                    
 
         block_hit_list = pygame.sprite.spritecollide(self, platform_list, False)
         if self.momentumX > 0:
@@ -130,7 +146,7 @@ class Platform(pygame.sprite.Sprite):
         block = Platform(0, 591, 768, 118,os.path.join('images','block0.png'))
         platform_list.add(block) #after each block
 
-        block = Platform(500, 400, 768, 118,os.path.join('images','block0.png'))
+        block = Platform(500, 200, 768, 118,os.path.join('images','block0.png'))
         platform_list.add(block) #after each block
 
         block = Platform(700, 600, 768, 118,os.path.join('images','block0.png'))
