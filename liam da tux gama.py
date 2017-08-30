@@ -102,7 +102,8 @@ class Player(pygame.sprite.Sprite):
 
         if self.rect.y > 960 and self.momentumY >= 0:
             self.momentumY = 0
-            self.rect.y = screenY-20
+            self.rect.y = 0
+            self.rect.x = 0
         
 
 class Enemy(pygame.sprite.Sprite):
@@ -149,13 +150,13 @@ class Platform(pygame.sprite.Sprite):
     def level1():
         #create level 1
         platform_list = pygame.sprite.Group()
-        block = Platform(0, 591, 768, 118,os.path.join('images','block0.png'))
+        block = Platform(0, 591, 500, 77,os.path.join('images','block0.png'))
         platform_list.add(block) #after each block
 
-        block = Platform(500, 200, 768, 118,os.path.join('images','block0.png'))
+        block = Platform(500, 200, 500, 77,os.path.join('images','block0.png'))
         platform_list.add(block) #after each block
 
-        block = Platform(700, 600, 768, 118,os.path.join('images','block0.png'))
+        block = Platform(700, 600, 500, 77,os.path.join('images','block0.png'))
         platform_list.add(block) #after each block
 
         return platform_list #at end of function level1
