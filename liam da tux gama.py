@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
 
         
 
-    def update(self, enemy_list, platform_list):
+    def update(self, enemy_list, platform_list, loot_list):
         #update sprite position
         currentX = self.rect.x
         nextX = currentX + self.momentumX
@@ -60,6 +60,11 @@ class Player(pygame.sprite.Sprite):
 
 
         #collisions
+        loot_hit_list = pygame.sprite.spritecollide(self, loot_list, False)
+        for loot in loot_hit_list:
+            loot_list.remove(loot)
+            self.score += 1
+            
         enemy_hit_list = pygame.sprite.spritecollide(self, enemy_list, False)
         '''for enemy in enemy_hit_list:
             self.score -= 1
@@ -162,6 +167,15 @@ class Platform(pygame.sprite.Sprite):
         return platform_list #at end of function level1
 
 
+    def loot1():
+        #loot level1
+        loot_list = pygame.sprite.Group()
+        loot = Platform(450, 572, 175, 86, os.path.join('images', 'loot.png'))
+        loot_list.add(loot)
+
+        return loot_list #at end of function loot1
+
+
 
         
 '''SETUP'''
@@ -189,6 +203,8 @@ backdrop = pygame.image.load (os.path.join ( 'images',   'stage.png' ) ) .conver
 backdropRect = screen.get_rect ( )
 
 platform_list = Platform.level1() #set stage to Level 1
+loot_list = Platform.loot1() #set loot to Level 1
+
 
 player = Player() #spawn player
 player.rect.x = 0 #go to x
@@ -257,6 +273,9 @@ while main == True:
         for enemy in enemy_list:
              enemy.rect.x -= scroll
 
+        for loot in loot_list:
+            loot.rect.x -= scroll
+
     #scroll world backward
     if player.rect.x <+ backwardX:
         scroll = min(1,  (backwardX - player.rect.x))
@@ -266,6 +285,10 @@ while main == True:
 
         for enemy in enemy_list:
             enemy.rect.x += scroll
+
+        for loot in loot_list:
+            loot.rect.x += scroll
+            
     
                 
 
@@ -276,11 +299,13 @@ while main == True:
     
     platform_list.draw(screen) #draw platforms on screen
     player.gravity()  #check gravity
-    player.update(enemy_list, platform_list) #update player position
+    player.update(enemy_list, platform_list, loot_list) #update player position
     movingsprites.draw(screen) #draw player
     
     enemy_list.draw(screen) #refresh enemies
     enemy.move() # move enemy sprite
+
+    loot_list.draw(screen) #refresh loot
 
     stats(player.score) #draw text
 
