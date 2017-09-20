@@ -5,6 +5,7 @@ import pygame #load pygame keywords
 import sys
 import os
 import pygame.freetype #load fonts
+import random
 
 '''OBJECTS'''
 # put classes & functions here
@@ -81,7 +82,10 @@ class Player(pygame.sprite.Sprite):
             idx = self.rect.collidelist(enemy_hit_list)
             if idx == -1:
                 self.damage = 0 #set damage back to 0
-                self.score -= 1 #subtract 1 hp
+                try:
+                    self.score -= 1 #subtract 1 hp
+                except:
+                    pass
 
                     
 
@@ -98,6 +102,9 @@ class Player(pygame.sprite.Sprite):
                 self.rect.y = currentY
                 self.momentumY = 0
                 self.collide_delta = 0 #stop jumping
+
+        if self.score == -6:
+            self.score = "You lose"
                 
     def jump (self, platform_list):
         self.jump_delta = 0
@@ -108,7 +115,7 @@ class Player(pygame.sprite.Sprite):
         if self.rect.y > 960 and self.momentumY >= 0:
             self.momentumY = 0
             self.rect.y = 0
-            self.rect.x = 0
+            self.rect.x = 180
 
 class Throwable(pygame.sprite.Sprite):
     #Spawn throwable object
@@ -117,6 +124,7 @@ class Throwable(pygame.sprite.Sprite):
         self.image = pygame.image.load(os.path.join('images', img))
         self.image.convert_alpha()
         self.image.set_colorkey(alpha)
+        self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -144,6 +152,9 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = y
         self.counter = 0 #counter variable
 
+        self.hit = 0
+        self.damage = 0 #enemy is hit
+
     def move(self):
         #enemy movement
         if self.counter >= 0 and self.counter <= 30:
@@ -156,11 +167,31 @@ class Enemy(pygame.sprite.Sprite):
 
         self.counter += 1
 
-    def update(self, firepower, enemy_list):
+    def update(self, firepower, enemy_list, screenX, screenY):
         #detect firepower collision
         fire_hit_list = pygame.sprite.spritecollide(self, firepower, False)
-        for fire in fire_hit_list:
+        '''for fire in fire_hit_list:
+            enemy_list.remove(self)'''
+
+        if self.damage == 0:
+            for fire in fire_hit_list:
+                if not self.rect.contains(fire):
+                    self.damage = self.rect.colliderect(fire)
+
+        if self.damage == 1:
+            idx = self.rect.collidelist(fire_hit_list)
+            if idx == -1:
+                self.damage = 0 #set damage back to 0
+                self.hit += 1
+                self.rect.x = random.randrange(0, screenX)
+
+        #detect firepower collision
+        print(self.hit)
+
+        if self.hit >= 6:
             enemy_list.remove(self)
+            player.score = "You win!"
+                
 
 
 class Platform(pygame.sprite.Sprite):
@@ -313,7 +344,8 @@ while main == True:
 
     #scroll world backward
     if player.rect.x <+ backwardX:
-        scroll = min(1,  (backwardX - player.rect.x))
+        '''scroll = min(1,  (backwardX - player.rect.x))'''
+        scroll = backwardX - player.rect.x
         player.rect.x = backwardX
         for platform in platform_list:
             platform.rect.x += scroll
@@ -343,7 +375,7 @@ while main == True:
     if fire.firing:
         fire.update(screenY)
         firepower.draw(screen)
-        enemy_list.update(firepower, enemy_list) #update enemy
+        enemy_list.update(firepower, enemy_list, screenX, screenY) #update enemy
 
     loot_list.draw(screen) #refresh loot
 
